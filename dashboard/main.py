@@ -5,15 +5,19 @@ import logging
 import ConfigParser
 import os
 
+
 class Dashboard(bottle.Bottle):
     def __init__(self, *args, **kwargs):
-        print os.path.join(os.path.dirname(__file__), 'static')
+
+        # Dashboard new configurations:
         self.main_menu = kwargs.pop("main_menu", menu())
         self.user_profile = kwargs.pop("user", None)
         self.pages = kwargs.pop("tree", tree())
         self._board_config = kwargs.pop("board_config", ConfigParser.ConfigParser())
         if not self._board_config.sections():
             self._board_config.read(kwargs.pop("config_file", "default_settings.ini"))
+
+        # Here starts Bottle configuration:
         super(Dashboard, self).__init__(*args, **kwargs)
 
         def server_static(filepath):
@@ -25,8 +29,6 @@ class Dashboard(bottle.Bottle):
             return bottle.static_file(filepath, root=os.path.join(os.path.dirname(__file__), 'static'))
 
         self.route('/static/<filepath:path>', name="static", callback=server_static)
-
-
 
     def set_config(self, new_config):
         logging.info(new_config)
@@ -63,9 +65,9 @@ class page(object):
 
     def render(self):
         return bottle.template("page",
-                                title=self.title,
-                                description=self.description,
-                                page_content=self.content)
+                               title=self.title,
+                               description=self.description,
+                               page_content=self.content)
 
 
 class tree(OrderedDict):
@@ -91,7 +93,7 @@ class menu(OrderedDict):
         url = kwargs.pop("url")
         logging.info(bottle.TEMPLATE_PATH)
         return bottle.template("menu",
-                        url=url,
-                        active_page=active,
-                        title=self.title,
-                        entries=self.items())
+                               url=url,
+                               active_page=active,
+                               title=self.title,
+                               entries=self.items())
