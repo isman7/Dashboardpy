@@ -14,14 +14,14 @@ print("The absolute path to server program is: {}".format(abspath))
 board = Dashboard()
 
 
-@board.route('/static/<filepath:path>', name="static")
-def server_static(filepath):
-    """
-    Enables support to CSS, JS, images, etc. Links the public URL with the real server files and serve them.
-    :param filepath: a valid local path in server.
-    :return: returns the file to bottle app.
-    """
-    return bottle.static_file(filepath, root=os.path.join(abspath, 'static'))
+# @board.route('/static/<filepath:path>', name="static")
+# def server_static(filepath):
+#     """
+#     Enables support to CSS, JS, images, etc. Links the public URL with the real server files and serve them.
+#     :param filepath: a valid local path in server.
+#     :return: returns the file to bottle app.
+#     """
+#     return bottle.static_file(filepath, root=os.path.join(abspath, 'static'))
 
 
 @board.route('/')

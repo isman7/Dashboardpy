@@ -3,9 +3,11 @@ import bottle
 from collections import OrderedDict
 import logging
 import ConfigParser
+import os
 
 class Dashboard(bottle.Bottle):
     def __init__(self, *args, **kwargs):
+        print os.path.join(os.path.dirname(__file__), 'static')
         self.main_menu = kwargs.pop("main_menu", menu())
         self.user_profile = kwargs.pop("user", None)
         self.pages = kwargs.pop("tree", tree())
@@ -13,6 +15,17 @@ class Dashboard(bottle.Bottle):
         if not self._board_config.sections():
             self._board_config.read(kwargs.pop("config_file", "default_settings.ini"))
         super(Dashboard, self).__init__(*args, **kwargs)
+
+        def server_static(filepath):
+            """
+            Enables support to CSS, JS, images, etc. Links the public URL with the real server files and serve them.
+            :param filepath: a valid local path in server.
+            :return: returns the file to bottle app.
+            """
+            return bottle.static_file(filepath, root=os.path.join(os.path.dirname(__file__), 'static'))
+
+        self.route('/static/<filepath:path>', name="static", callback=server_static)
+
 
 
     def set_config(self, new_config):
