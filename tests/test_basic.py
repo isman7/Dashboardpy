@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
-from bottle import Bottle, static_file, view, request
+from bottle import static_file, view, request
 from dashboard import Dashboard, page
 import bottle
 import os
 import begin
+import ConfigParser
 
+cfg = ConfigParser.ConfigParser()
 
 # The server routine starts here:
 abspath = os.path.abspath(".")
@@ -68,7 +70,10 @@ def error404(error):
 
 @begin.start(auto_convert=True)
 @begin.logging
-def main(host='localhost', port='10010'):
+def main(host='localhost', port='10010', config_path="settings.ini"):
+
+    cfg.read(config_path)
+    board.set_config(cfg)
 
     board.pages.put("home", page(url="home",
                                  icon="fa fa-home",

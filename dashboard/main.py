@@ -2,30 +2,30 @@ from __future__ import unicode_literals
 from bottle import Bottle, template
 from collections import OrderedDict
 import logging
-try:
-    import ConfigParser as cfp
-except ImportError:
-    import configparser as cfp
-
+import ConfigParser
 
 class Dashboard(Bottle):
     def __init__(self, *args, **kwargs):
         self.main_menu = kwargs.pop("main_menu", menu())
         self.user_profile = kwargs.pop("user", None)
         self.pages = kwargs.pop("tree", tree())
-        self.board_config = kwargs.pop("board_config", cfp.ConfigParser())
-        if not self.board_config.sections():
-            self.board_config.read(kwargs.pop("config_file", "dashboard_settings.ini"))
+        self._board_config = kwargs.pop("board_config", ConfigParser.ConfigParser())
+        if not self._board_config.sections():
+            self._board_config.read(kwargs.pop("config_file", "default_settings.ini"))
         super(Dashboard, self).__init__(*args, **kwargs)
+
+    def set_config(self, new_config):
+        logging.info(new_config)
+        self._board_config = new_config
 
     def render_dict(self, **kwargs):
         the_page = kwargs.get("page", None)
         url = kwargs.pop("url", self.get_url)
         return {"url": url,
-                "title": self.board_config.get("DEFAULT", "title"),
-                "description": self.board_config.get("DEFAULT", "description"),
-                "color": self.board_config.get("layout", "color"),
-                "layout_options": self.board_config.get("layout", "options"),
+                "title": self._board_config.get("DEFAULT", "title"),
+                "description": self._board_config.get("DEFAULT", "description"),
+                "color": self._board_config.get("layout", "color"),
+                "layout_options": self._board_config.get("layout", "options"),
                 "sidebar_menu": self.main_menu.render(url=url, **kwargs),
                 "page": self.pages.get(the_page, page()).render()}
 
