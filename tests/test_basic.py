@@ -1,5 +1,5 @@
 from __future__ import unicode_literals, print_function
-from dashboard import bottle, Dashboard, page
+from dashboard import Dashboard, page
 import bottle
 import os
 import begin
@@ -8,6 +8,7 @@ import ConfigParser
 cfg = ConfigParser.ConfigParser()
 
 # The server routine starts here:
+abspath = os.path.abspath(".")
 print("The absolute path to server program is: {}".format(abspath))
 
 board = Dashboard()
