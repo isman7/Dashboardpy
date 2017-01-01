@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
-from bottle import Bottle, template
+import bottle
 from collections import OrderedDict
 import logging
 import ConfigParser
 
-class Dashboard(Bottle):
+class Dashboard(bottle.Bottle):
     def __init__(self, *args, **kwargs):
         self.main_menu = kwargs.pop("main_menu", menu())
         self.user_profile = kwargs.pop("user", None)
@@ -13,6 +13,7 @@ class Dashboard(Bottle):
         if not self._board_config.sections():
             self._board_config.read(kwargs.pop("config_file", "default_settings.ini"))
         super(Dashboard, self).__init__(*args, **kwargs)
+
 
     def set_config(self, new_config):
         logging.info(new_config)
@@ -48,10 +49,10 @@ class page(object):
         self.content = kwargs.pop("content", "The content")
 
     def render(self):
-        return template("page",
-                        title=self.title,
-                        description=self.description,
-                        page_content=self.content)
+        return bottle.template("page",
+                                title=self.title,
+                                description=self.description,
+                                page_content=self.content)
 
 
 class tree(OrderedDict):
@@ -75,7 +76,8 @@ class menu(OrderedDict):
     def render(self, **kwargs):
         active = kwargs.pop("page", None)
         url = kwargs.pop("url")
-        return template("menu",
+        logging.info(bottle.TEMPLATE_PATH)
+        return bottle.template("menu",
                         url=url,
                         active_page=active,
                         title=self.title,

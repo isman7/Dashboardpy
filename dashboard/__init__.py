@@ -1,3 +1,5 @@
 from main import *
-import bottle as bottle
-bottle.TEMPLATE_PATH.append('./dashboard/views/')
+import bottle
+import os
+
+bottle.TEMPLATE_PATH.append(os.path.join(os.path.dirname(__file__), 'views'))
