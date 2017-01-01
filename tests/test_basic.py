@@ -1,10 +1,14 @@
-from __future__ import unicode_literals
-from bottle import static_file, view, request
-from dashboard import Dashboard, page
+from __future__ import unicode_literals, print_function
+from dashboard import bottle, Dashboard, page
 import bottle
 import os
 import begin
 import ConfigParser
+import sys
+
+
+print(bottle.TEMPLATE_PATH)
+print(sys.path)
 
 cfg = ConfigParser.ConfigParser()
 
@@ -23,40 +27,40 @@ def server_static(filepath):
     :param filepath: a valid local path in server.
     :return: returns the file to bottle app.
     """
-    return static_file(filepath, root=os.path.join(abspath, 'static'))
+    return bottle.static_file(filepath, root=os.path.join(abspath, 'static'))
 
 
 @board.route('/')
 @board.route('/home/', name="home")
-@view('dashboard')
+@bottle.view('dashboard')
 def index():
     return board.render_dict(page="home")
 
 
 @board.route('/facebook/', name="facebook")
-@view('dashboard')
+@bottle.view('dashboard')
 def facebook():
     return board.render_dict(page="social")
 
 
 @board.route('/search', name='search')
-@view('dashboard')
+@bottle.view('dashboard')
 def search():
     return board.render_dict(page="search_page")
 
 @board.route('/chart', name='chart')
-@view('dashboard_test_chartjs')
+@bottle.view('dashboard_test_chartjs')
 def chart():
     return board.render_dict(page="chart")
 
 
 @board.route('/search', name='search', method='POST')
-@view('dashboard')
+@bottle.view('dashboard')
 def search():
     """
     Do search stuff. In this example the query is rendered as plain text inside the page.
     """
-    search_string = request.forms.get("s")
+    search_string = bottle.request.forms.get("s")
     search_page = board.pages.get("search_page", page(url="search"))
     search_page.content = search_string
     board.pages.put("search_page", search_page)
