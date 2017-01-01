@@ -4,19 +4,12 @@ import bottle
 import os
 import begin
 import ConfigParser
-import sys
-
-
-print(bottle.TEMPLATE_PATH)
-print(sys.path)
 
 cfg = ConfigParser.ConfigParser()
 
 # The server routine starts here:
-abspath = os.path.abspath(".")
 print("The absolute path to server program is: {}".format(abspath))
 
-# menu = dashboard_menu(bottle=app)
 board = Dashboard()
 
 
