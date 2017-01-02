@@ -27,12 +27,6 @@ def facebook():
     return board.render_dict(page="social")
 
 
-@board.route('/chart', name='chart')
-@bottle.view('dashboard_test_chartjs')
-def chart():
-    return board.render_dict(page="chart")
-
-
 @begin.start(auto_convert=True)
 @begin.logging
 def main(host='localhost', port='10010', config_path="settings.ini"):
@@ -54,32 +48,8 @@ def main(host='localhost', port='10010', config_path="settings.ini"):
                                         name="search",
                                         title="Search"))
 
-    board.pages.put("chart", page(url="chart",
-                                    icon="fa fa-pie-chart",
-                                    name="chart",
-                                    title="ChartJS"))
-
     board.register_page(page_name="home")
     board.register_page(page_name="social")
-    board.register_page(page_name="chart")
-
-    board.pages.get("chart").content = """
-<div class="box box-danger">
-    <div class="box-header with-border">
-      <h3 class="box-title">Donut Chart</h3>
-
-      <div class="box-tools pull-right">
-        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-        </button>
-        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-      </div>
-    </div>
-    <div class="box-body">
-      <canvas id="pieChart" style="height:250px"></canvas>
-    </div>
-    <!-- /.box-body -->
-</div>
-    """
 
     bottle.run(board, host=host, port=port, debug=True)
 
