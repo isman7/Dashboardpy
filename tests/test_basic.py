@@ -15,16 +15,17 @@ board = Dashboard()
 
 
 @board.route('/')
-@board.route('/home/', name="home")
-@bottle.view('dashboard')
+@board.route('/home/')
+@board.route('/home', name="main_page")
+@board.page('main_menu')
 def index():
-    return board.render_dict(page="home")
+    pass
 
 
-@board.route('/facebook/', name="facebook")
-@bottle.view('dashboard')
-def facebook():
-    return board.render_dict(page="social")
+@board.route('/page/', name="example")
+@board.page('example')
+def do_stuff():
+    pass
 
 
 @begin.start(auto_convert=True)
@@ -34,23 +35,7 @@ def main(host='localhost', port='10010', config_path="settings.ini"):
     cfg.read(config_path)
     board.set_config(cfg)
 
-    board.pages.put("home", page(url="home",
-                                 icon="fa fa-home",
-                                 name="home",
-                                 title="Home page",
-                                 content="This is my main page."))
-    board.pages.put("social", page(url="facebook",
-                                   icon="fa fa-facebook",
-                                   name="social",
-                                   title="Facebook account",
-                                   content="Link to Facebook maybe?"))
-    board.pages.put("search_page", page(url="search",
-                                        name="search",
-                                        title="Search"))
-
-    board.register_page(page_name="home")
-    board.register_page(page_name="social")
-
+    board.main_menu.put("example", board.pages.get('example'))
     bottle.run(board, host=host, port=port, debug=True)
 
 

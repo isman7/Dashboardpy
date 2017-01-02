@@ -10,15 +10,25 @@ class Dashboard(bottle.Bottle):
     def __init__(self, *args, **kwargs):
 
         # Dashboard new configurations:
-        self.main_menu = kwargs.pop("main_menu", menu())
-        self.user_profile = kwargs.pop("user", None)
-        self.pages = kwargs.pop("tree", tree())
         self._board_config = kwargs.pop("board_config", ConfigParser.ConfigParser())
         if not self._board_config.sections():
             self._board_config.read(kwargs.pop("config_file", "default_settings.ini"))
 
-        # Here starts Bottle configuration:
         super(Dashboard, self).__init__(*args, **kwargs)
+
+        self.pages = kwargs.pop("tree", tree())
+        self.main_menu = kwargs.pop("main_menu", menu())
+        self.main_page = kwargs.pop("main_page", page(title="Home page",
+                                                      name="main_page",
+                                                      description="This is the main page.",
+                                                      icon="fa fa-home",
+                                                      content="This is the dashboard!"
+                                                      ))
+
+        self.register_page(self.main_page)
+        self.main_menu.put(self.main_page.name, self.main_page)
+
+        self.user_profile = kwargs.pop("user", None)
 
         @self.route('/static/<filepath:path>', name="static")
         def server_static(filepath):
@@ -58,22 +68,36 @@ class Dashboard(bottle.Bottle):
         return {"url": url,
                 "title": self._board_config.get("DEFAULT", "title"),
                 "description": self._board_config.get("DEFAULT", "description"),
-                "color": self._board_config.get("layout", "color"),
-                "layout_options": self._board_config.get("layout", "options"),
+                "color": self._board_config.get("DEFAULT", "color"),
+                "layout_options": self._board_config.get("DEFAULT", "layout_options"),
+                "main_page_name": self.main_page.name,
                 "sidebar_menu": self.main_menu.render(url=url, **kwargs),
                 "page": self.pages.get(the_page, page()).render()}
 
-    def register_page(self, **kwargs):
-        the_page = self.pages.get(kwargs.get("page_name"))
-        the_menu = kwargs.get("menu", self.main_menu)
-        logging.info(page)
-        the_menu.put(the_page.name, the_page)
-        return the_menu
+    def register_page(self, aPage, **kwargs):
+        # the_page = self.pages.get(kwargs.get("page_name"))
+        # the_menu = kwargs.get("menu", self.main_menu)
+        # logging.info(page)
+        # the_menu.put(the_page.name, the_page)
+        if issubclass(aPage.__class__, page):
+            self.pages.put(aPage.name, aPage)
+        return self.pages
+
+    def page(self, name='the_page'):
+        if name not in self.pages:
+            self.register_page(page(name=name))
+
+        def decorator(func):
+            @bottle.view('dashboard')
+            def decorated():
+                func()
+                return self.render_dict(page=name)
+            return decorated
+        return decorator
 
 
 class page(object):
     def __init__(self, **kwargs):
-        self.bottle = kwargs.pop("bottle", None)
         self.title = kwargs.pop("title", "Default page")
         self.description = kwargs.pop("description", "A single page")
         self.name = kwargs.pop("name", "default-page")
@@ -98,13 +122,15 @@ class tree(OrderedDict):
 
 class menu(OrderedDict):
     def __init__(self, *args, **kwargs):
-        self.bottle = kwargs.pop("bottle", None)
         self.title = kwargs.pop("title", "Main menu")
         self.name = kwargs.pop("name", "main-menu")
         super(menu, self).__init__(*args, **kwargs)
 
     def put(self, key, item, **kwargs):
-        self.__setitem__(key, item, **kwargs)
+        if issubclass(item.__class__, page):
+            self.__setitem__(key, item, **kwargs)
+        else:
+            raise TypeError
 
     def render(self, **kwargs):
         active = kwargs.pop("page", None)
