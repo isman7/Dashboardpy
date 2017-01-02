@@ -35,26 +35,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{url('static', filepath='plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css')}}">
 
 </head>
-<!--
-BODY TAG OPTIONS:
-=================
-Apply one or more of the following classes to get the
-desired effect
-|---------------------------------------------------------|
-| SKINS         | skin-blue                               |
-|               | skin-black                              |
-|               | skin-purple                             |
-|               | skin-yellow                             |
-|               | skin-red                                |
-|               | skin-green                              |
-|---------------------------------------------------------|
-|LAYOUT OPTIONS | fixed                                   |
-|               | layout-boxed                            |
-|               | layout-top-nav                          |
-|               | sidebar-collapse                        |
-|               | sidebar-mini                            |
-|---------------------------------------------------------|
--->
 <body class="hold-transition skin-{{color}} {{layout_options}}">
 <div class="wrapper">
 
@@ -62,7 +42,7 @@ desired effect
   <header class="main-header">
 
     <!-- Logo -->
-    <a href="{{url('home')}}" class="logo">
+    <a href="{{url(main_page_name)}}" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>{{title.split('.')[0][0]}}</b>{{title.split('.')[1][0:2]}}</span>
       <!-- logo for regular state and mobile devices -->
