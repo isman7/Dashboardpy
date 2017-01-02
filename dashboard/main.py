@@ -30,6 +30,23 @@ class Dashboard(bottle.Bottle):
 
         self.route('/static/<filepath:path>', name="static", callback=server_static)
 
+        def search_get():
+            return bottle.template("dashboard", self.render_dict(page="search_page"))
+
+        self.route('/search', name='search', callback=search_get)
+
+        def search_post():
+            """
+            Do search stuff. In this example the query is rendered as plain text inside the page.
+            """
+            search_string = bottle.request.forms.get("s")
+            search_page = self.pages.get("search_page", page(url="search"))
+            search_page.content = search_string
+            self.pages.put("search_page", search_page)
+            return bottle.template("dashboard", self.render_dict(page="search_page"))
+
+        self.route('/search', name='search', method='POST', callback=search_post)
+
     def set_config(self, new_config):
         logging.info(new_config)
         self._board_config = new_config
@@ -91,7 +108,6 @@ class menu(OrderedDict):
     def render(self, **kwargs):
         active = kwargs.pop("page", None)
         url = kwargs.pop("url")
-        logging.info(bottle.TEMPLATE_PATH)
         return bottle.template("menu",
                                url=url,
                                active_page=active,

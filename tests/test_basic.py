@@ -14,16 +14,6 @@ print("The absolute path to server program is: {}".format(abspath))
 board = Dashboard()
 
 
-# @board.route('/static/<filepath:path>', name="static")
-# def server_static(filepath):
-#     """
-#     Enables support to CSS, JS, images, etc. Links the public URL with the real server files and serve them.
-#     :param filepath: a valid local path in server.
-#     :return: returns the file to bottle app.
-#     """
-#     return bottle.static_file(filepath, root=os.path.join(abspath, 'static'))
-
-
 @board.route('/')
 @board.route('/home/', name="home")
 @bottle.view('dashboard')
@@ -37,28 +27,10 @@ def facebook():
     return board.render_dict(page="social")
 
 
-@board.route('/search', name='search')
-@bottle.view('dashboard')
-def search():
-    return board.render_dict(page="search_page")
-
 @board.route('/chart', name='chart')
 @bottle.view('dashboard_test_chartjs')
 def chart():
     return board.render_dict(page="chart")
-
-
-@board.route('/search', name='search', method='POST')
-@bottle.view('dashboard')
-def search():
-    """
-    Do search stuff. In this example the query is rendered as plain text inside the page.
-    """
-    search_string = bottle.request.forms.get("s")
-    search_page = board.pages.get("search_page", page(url="search"))
-    search_page.content = search_string
-    board.pages.put("search_page", search_page)
-    return board.render_dict(page="search_page")
 
 
 @board.error(404)
