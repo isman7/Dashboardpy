@@ -33,11 +33,6 @@ def chart():
     return board.render_dict(page="chart")
 
 
-@board.error(404)
-def error404(error):
-    return 'Nothing here, sorry'
-
-
 @begin.start(auto_convert=True)
 @begin.logging
 def main(host='localhost', port='10010', config_path="settings.ini"):

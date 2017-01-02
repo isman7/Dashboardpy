@@ -20,6 +20,7 @@ class Dashboard(bottle.Bottle):
         # Here starts Bottle configuration:
         super(Dashboard, self).__init__(*args, **kwargs)
 
+        @self.route('/static/<filepath:path>', name="static")
         def server_static(filepath):
             """
             Enables support to CSS, JS, images, etc. Links the public URL with the real server files and serve them.
@@ -28,13 +29,11 @@ class Dashboard(bottle.Bottle):
             """
             return bottle.static_file(filepath, root=os.path.join(os.path.dirname(__file__), 'static'))
 
-        self.route('/static/<filepath:path>', name="static", callback=server_static)
-
+        @self.route('/search', name='search')
         def search_get():
             return bottle.template("dashboard", self.render_dict(page="search_page"))
 
-        self.route('/search', name='search', callback=search_get)
-
+        @self.route('/search', name='search', method='POST')
         def search_post():
             """
             Do search stuff. In this example the query is rendered as plain text inside the page.
@@ -45,7 +44,9 @@ class Dashboard(bottle.Bottle):
             self.pages.put("search_page", search_page)
             return bottle.template("dashboard", self.render_dict(page="search_page"))
 
-        self.route('/search', name='search', method='POST', callback=search_post)
+        @self.error(404)
+        def error404(error):
+            return 'Nothing here, sorry'
 
     def set_config(self, new_config):
         logging.info(new_config)
