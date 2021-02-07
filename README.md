@@ -13,10 +13,20 @@ the `setup.py` way:
 git clone https://github.com/isman7/Dashboardpy.git
 cd Dashboardpy
 pip install -r requirements.txt
-python setup.py install
+pip install -e .
 ```
 
 ## Basic Usage
+
+### Using CLI script (with begins)
+
+Simply do, 
+
+```
+python scripts/cli.py
+```
+
+### Using the Bottle app API
 
 A `dashboard()` instance is basically an extension of a `bottle()` application including several pre-defined `routes`,
 and `views`. Also decorator-like syntax is provided to render the dashboard.

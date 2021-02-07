@@ -1,9 +1,9 @@
 from dashboard import Dashboard
 import bottle
 import begin
-import ConfigParser
+import configparser
 
-cfg = ConfigParser.ConfigParser()
+cfg = configparser.ConfigParser()
 board = Dashboard()
 
 
@@ -23,7 +23,7 @@ def do_stuff():
 
 @begin.start(auto_convert=True)
 @begin.logging
-def main(host='localhost', port='10010', config_path="settings.ini"):
+def main(host='localhost', port='8080', config_path="scripts/settings.ini"):
 
     cfg.read(config_path)
     board.set_config(cfg)

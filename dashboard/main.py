@@ -1,8 +1,7 @@
-from __future__ import unicode_literals
 import bottle
 from collections import OrderedDict
 import logging
-import ConfigParser
+import configparser
 import os
 
 
@@ -10,7 +9,7 @@ class Dashboard(bottle.Bottle):
     def __init__(self, *args, **kwargs):
 
         # Dashboard new configurations:
-        self._board_config = kwargs.pop("board_config", ConfigParser.ConfigParser())
+        self._board_config = kwargs.pop("board_config", configparser.ConfigParser())
         if not self._board_config.sections():
             self._board_config.read(kwargs.pop("config_file", "default_settings.ini"))
 
